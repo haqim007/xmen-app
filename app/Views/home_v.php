@@ -12,6 +12,9 @@
         <link rel="stylesheet" href="https://unpkg.com/bootstrap-table@1.18.3/dist/bootstrap-table.min.css">
         <!-- Toastr -->
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css">
+        <!-- Select2 -->
+        <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+
 
         <title>X-MEN</title>
         <style>
@@ -158,7 +161,8 @@
                                 <div class="form-row">
                                     <div class="col">
                                         <input type="hidden" name="superhero_id">
-                                        <input type="text" name="new_skill" class="form-control" placeholder="New Skill">
+                                        <!-- <input type="text" name="new_skill" class="form-control" placeholder="New Skill"> -->
+                                        <select class="form-control" name="new_skill" id="superhero_skills_select" placeholder="New Skill"></select>
                                     </div>
                                     <div class="col">
                                         <button class="btn btn-primary btn-small" id="btn_submit_skill">Tambah Skill</button>
@@ -196,6 +200,8 @@
     <script src="https://unpkg.com/bootstrap-table@1.18.3/dist/bootstrap-table.min.js"></script>
     <!-- Toastr -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
+    <!-- Select2 -->
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
     <script>
         const configTable = {
@@ -381,7 +387,7 @@
                                     $("#form_add_skill [name='superhero_id']").val(res.id)
 
                                     $("#modal_form_superhero").modal("show")
-                                    alert(id)
+                                    
                                     $superheroskills_table.bootstrapTable("refreshOptions", {
                                         ajax: (params) => ajaxBTbl(params, `${url}/show_skills/${id}`),
                                     })
@@ -396,6 +402,26 @@
                                         ajax: (params) => ajaxBTbl(params, `${url}/show_skills/${id}`),
                                     })
                         }
+
+                        $.ajax({
+                            url: `${url}/show_skills_not/${id}`,
+                            method:"get",
+                            success:function(res){
+                                    let data = []
+                                    res.map((val) => {
+                                        data.push({id: val.id, text:val.skill_name})
+                                    })
+                                    $("#superhero_skills_select").select2({
+                                        tags: true,
+                                        data
+                                    }); 
+                                },
+                            error:function(xhr, status, error){
+                                    toastr["error"](xhr.responseJSON.messages.error, `${error} (${xhr.status})`)
+                                }
+                        });
+
+                        
                         
                     })
                     

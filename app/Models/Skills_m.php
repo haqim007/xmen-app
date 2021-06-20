@@ -13,11 +13,12 @@ class Skills_m extends Model
     //     return $this->join("master_gender","gender_id=master_gender.id","left")->findAll();
     // }
 
-    // public function bySuperheroID($id){
-    //     $this->select("master_superhero.id, name, gender_id");
-    //     return $this
-    //             ->join("master_gender","gender_id=master_gender.id","left")
-    //             ->find($id);
-    // }
+    public function exceptSuperheroID($id){
+        $this->select("master_skills.id, skill_name");
+        return $this
+                ->join("superhero_skills","skill_id=master_skills.id","left")
+                ->where("superhero_id !=", $id)
+                ->find();
+    }
 
 }
