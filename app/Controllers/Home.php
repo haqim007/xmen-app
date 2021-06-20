@@ -16,4 +16,10 @@ class Home extends BaseController
 
 		return view('married_sim_v', $data);
 	}
+
+	public function skills(){
+		$data = ["url_api" => $_ENV['URL_API']];
+
+		return view('skills_v', $data);
+	}
 }

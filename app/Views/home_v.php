@@ -155,7 +155,7 @@
             // load table skills on detail superhero
             $superheroskills_table.bootstrapTable({
                 ...configTable,
-                ajax: (params) => ajaxBTbl(params, `${url}/show_skills/0`),
+                ajax: (params) => ajaxBTbl(params, `${url}/show_skills_by_superhero/0`),
 
                 columns: [
                     {
@@ -295,7 +295,7 @@
                                     $("#modal_form_superhero").modal("show")
                                     
                                     $superheroskills_table.bootstrapTable("refreshOptions", {
-                                        ajax: (params) => ajaxBTbl(params, `${url}/show_skills/${id}`),
+                                        ajax: (params) => ajaxBTbl(params, `${url}/show_skills_by_superhero/${id}`),
                                     })
                                 },
                             error:function(xhr, status, error){
@@ -305,7 +305,7 @@
                         }else{
                             $("#modal_form_superhero").modal("show")
                             $superheroskills_table.bootstrapTable("refreshOptions", {
-                                        ajax: (params) => ajaxBTbl(params, `${url}/show_skills/${id}`),
+                                        ajax: (params) => ajaxBTbl(params, `${url}/show_skills_by_superhero/${id}`),
                                     })
                         }
 
@@ -357,7 +357,7 @@
                             $superhero_table.bootstrapTable("refresh")
                             $("#form_add_skill [name='superhero_id']").val(res.data.id)
                             $superheroskills_table.bootstrapTable("refreshOptions", {
-                                        ajax: (params) => ajaxBTbl(params, `${url}/show_skills/${res.data.id}`),
+                                        ajax: (params) => ajaxBTbl(params, `${url}/show_skills_by_superhero/${res.data.id}`),
                                     })
                         },
                         error:function(xhr, status, error){
@@ -398,7 +398,7 @@
                         method:"get",
                         success:function(res){
                                 let data = []
-                                res.map((val) => {
+                                res.length > 1 && res.map((val) => {
                                     data.push({id: val.id, text:val.skill_name})
                                 })
 

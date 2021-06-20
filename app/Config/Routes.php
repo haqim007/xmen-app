@@ -34,11 +34,13 @@ $routes->setAutoRoute(true);
 // route since we don't have to scan directories.
 $routes->get('/', 'Home::index');
 
-$routes->get('xmenapi/show_skills/(:segment)',                'XmenAPI::show_skills/$1');
+$routes->get('xmenapi/show_skills_by_superhero/(:segment)',                'XmenAPI::show_skills_by_superhero/$1');
 $routes->get('xmenapi/delete_superheroskills/(:segment)',    'XmenAPI::delete_superheroskills/$1');
 $routes->get('xmenapi/show_skills_not/(:segment)',    'XmenAPI::show_skills_not/$1');
 $routes->get('xmenapi/get_superhero_groupby_gender',    'XmenAPI::get_superhero_groupby_gender');
 $routes->get('xmenapi/kid_skills_prob/(:segment)/(:segment)',    'XmenAPI::kid_skills_prob/$1/$2');
+$routes->get('xmenapi/show_all_skills',    'XmenAPI::show_all_skills');
+$routes->get('xmenapi/show_skill/(:segment)',    'XmenAPI::show_skill/$1');
 
 
 $routes->presenter('xmenapi');

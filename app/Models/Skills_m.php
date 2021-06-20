@@ -26,8 +26,9 @@ class Skills_m extends Model
         // skills that the superhero has
         $skills = $this->getSkillBySuperhero($id);
         $skill_ids = array_column($skills, "id");
+        $skill_ids = count($skill_ids) > 0 ? $skill_ids : [""];
         return $this
-            ->select("id, skill_name")
+            ->select("master_skills.id, skill_name")
             ->whereNotIn("id", $skill_ids)
             ->findAll();
     }

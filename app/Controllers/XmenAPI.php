@@ -183,7 +183,7 @@ class XmenAPI extends ResourceController
     }
 
     // get superhero skills
-    public function show_skills($id = null)
+    public function show_skills_by_superhero($id = null)
     {
         $model = new SuperheroSkills_m();
 
@@ -262,6 +262,42 @@ class XmenAPI extends ResourceController
                 ->join("master_skills", "master_skills.id = skill_id")
                 ->whereIn("superhero_id", [$father_id, $mother_id])->findAll();
 
+            if($data){
+                return $this->respond($data, 200);
+            }else{
+                return $this->respond([], 200);
+            }
+        } catch (\Throwable $th) {
+            // throw $th;
+            return $this->failServerError('Server error. Please contact the Administrator');
+        }
+    }
+
+    // get skills
+    public function show_all_skills($id = null)
+    {
+        $model = new Skills_m();
+
+        try {
+            $data = $model->findAll();
+            if($data){
+                return $this->respond($data, 200);
+            }else{
+                return $this->respond([], 200);
+            }
+        } catch (\Throwable $th) {
+            // throw $th;
+            return $this->failServerError('Server error. Please contact the Administrator');
+        }
+    }
+
+    // get skills by id
+    public function show_skill($id = null)
+    {
+        $model = new Skills_m();
+
+        try {
+            $data = $model->find($id);
             if($data){
                 return $this->respond($data, 200);
             }else{

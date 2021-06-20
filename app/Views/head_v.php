@@ -144,7 +144,7 @@
                                     <a class="nav-link" href="<?php echo site_url("home/married_simulation") ?>">Simulasi Menikah</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link" href="#">Daftar Skills</a>
+                                    <a class="nav-link" href="<?php echo site_url("home/skills") ?>">Daftar Skills</a>
                                 </li>
                             </ul>
                         </div>
