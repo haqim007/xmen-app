@@ -1,60 +1,5 @@
-<html lang="en">
-    <head>
-        <meta charset="us-ascii">
-    <!-- Required meta tags -->
-    
-        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-        <link rel="shortcut icon" type="image/jpg" href="img/favicon-32x32.png"/>
-        <!-- Bootstrap CSS -->
-        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.1/css/all.min.css">
-        <!-- Bootstrap-table CSS -->
-        <link rel="stylesheet" href="https://unpkg.com/bootstrap-table@1.18.3/dist/bootstrap-table.min.css">
-        <!-- Toastr -->
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css">
-        <!-- Select2 -->
-        <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-
-
-        <title>X-MEN</title>
-        <style>
-            body {
-                margin: 20px;
-                padding: 20px;
-            }
-            .hr100 {
-                margin-bottom: 100px;
-            }
-            .contaner-section{
-                height:20%;
-                clear: both;
-            }
-            .header-wrapper{
-                min-height:110px;
-                background-color:#fff;
-            }
-            #wrapper_form_add_skill{
-                padding: 15px;
-                display:none;
-            }
-        </style>
-    </head>
-    <body>
-
+<?php require_once("head_v.php") ?>
     <div class="wrapper wrapper-content">
-        <div class="row sticky-top header-wrapper">
-            <div class="col-md-2"></div>
-            <div class="col-md-8">
-                <h1>X-MEN</h1>
-                <p>
-                    Ini adalah X-MEN, ini adalah tentang para pahlawan pembela bumi.
-                </p>
-            </div>
-            <div class="col-md-2"></div>
-            <hr class="hr100">
-        </div>
-        
-
 
         <!-- Daftar SuperHero Start -->
 
@@ -99,7 +44,8 @@
 
         
     <!-- Modal Form Edit Superhero -->
-    <div class="modal fade" id="modal_form_superhero" tabindex="-1" role="dialog" aria-labelledby="title_form_superhero" aria-hidden="true">
+    <!-- tabindex="-1" --> 
+    <div class="modal fade" id="modal_form_superhero"  role="dialog" aria-labelledby="title_form_superhero" aria-hidden="true">
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
             <div class="modal-header">
@@ -161,11 +107,12 @@
                                 <div class="form-row">
                                     <div class="col">
                                         <input type="hidden" name="superhero_id">
-                                        <!-- <input type="text" name="new_skill" class="form-control" placeholder="New Skill"> -->
-                                        <select class="form-control" name="new_skill" id="superhero_skills_select" placeholder="New Skill"></select>
+                                        <input type="hidden" name="new_skill" class="form-control" placeholder="New Skill">
+                                        <select class="form-control" id="superhero_skills_select" placeholder="New Skill"></select>
                                     </div>
                                     <div class="col">
-                                        <button class="btn btn-primary btn-small" id="btn_submit_skill">Tambah Skill</button>
+                                        <button class="btn btn-primary btn-sm" id="btn_submit_skill">Tambah Skill</button>
+                                        <button class="btn btn-warning btn-sm" id="btn_cancel_skill">Batalkan</button>
                                     </div>
                                 </div>
                             </form>
@@ -191,67 +138,16 @@
     <!-- End of Modal Form Edit Superhero -->
 
 
-    <!-- Optional JavaScript -->
-    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/jquery/dist/jquery.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
-    <!-- Bootstrap-table JS -->
-    <script src="https://unpkg.com/bootstrap-table@1.18.3/dist/bootstrap-table.min.js"></script>
-    <!-- Toastr -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
-    <!-- Select2 -->
-    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
 
     <script>
-        const configTable = {
-            striped:true,
-            sidePagination:'client',
-            smartDisplay:false,
-            cookie:true,
-            cookieExpire:'1h',
-            showExport:false,
-            exportTypes:['json', 'xml', 'csv', 'txt', 'excel'],
-            showFilter:true,
-            flat:true,
-            keyEvents:false,
-            showMultiSort:false,
-            reorderableColumns:false,
-            resizable:false,
-            pagination:true,
-            cardView:false,
-            detailView:false,
-            search:true,
-            showRefresh:true,
-            showToggle:true,
-            clickToSelect:true,
-            showColumns:true,
-            pageSize:5,
-            pageList:[5, 10, 25, 50, 100, 200, "All"]
-        }
+        
 
         var $superhero_table = $('#superhero-table')
         var $superheroskills_table = $('#superheroskills-table')
         $(function() {
             
-            // config toastr
-            toastr.options = {
-                "closeButton": true,
-                "debug": false,
-                "newestOnTop": false,
-                "progressBar": true,
-                "positionClass": "toast-top-right",
-                "preventDuplicates": true,
-                "onclick": null,
-                "showDuration": "300",
-                "hideDuration": "1000",
-                "timeOut": "5000",
-                "extendedTimeOut": "1000",
-                "showEasing": "swing",
-                "hideEasing": "linear",
-                "showMethod": "fadeIn",
-                "hideMethod": "fadeOut"
-            }
+
 
             // ajax calling data master superhero
             const url = "<?php echo $url_api ?>"
@@ -282,6 +178,8 @@
                         e.preventDefault()
                         $(this).hide()
                         $("#wrapper_form_add_skill").show()
+
+                        getOtherSkillsDontHave($("#form_add_skill [name='superhero_id']").val())
                     })
 
                     $("#btn_submit_skill").unbind().click(function(e){
@@ -296,12 +194,20 @@
                                 toastr["success"](res.messages, "Success!")
                                 $(".btn_add_skill").show()
                                 $("#wrapper_form_add_skill").hide()
+                                $('#superhero_skills_select').select2("destroy")
                                 $superheroskills_table.bootstrapTable("refresh")
                             },
                             error:function(xhr, status, error){
                                 toastr["error"](xhr.responseJSON.messages.error, `${error} (${xhr.status})`)
                             }
                         });
+                    })
+
+                    $("#btn_cancel_skill").unbind().click(function(e){
+                        e.preventDefault()
+                        $(".btn_add_skill").show()
+                        $("#wrapper_form_add_skill").hide()
+                        $('#superhero_skills_select').select2("destroy")
                     })
 
                     $(".action_superheroskill_delete").click(function(e){
@@ -403,41 +309,12 @@
                                     })
                         }
 
-                        $.ajax({
-                            url: `${url}/show_skills_not/${id}`,
-                            method:"get",
-                            success:function(res){
-                                    let data = []
-                                    res.map((val) => {
-                                        data.push({id: val.id, text:val.skill_name})
-                                    })
-                                    $("#superhero_skills_select").select2({
-                                        tags: true,
-                                        data
-                                    }); 
-                                },
-                            error:function(xhr, status, error){
-                                    toastr["error"](xhr.responseJSON.messages.error, `${error} (${xhr.status})`)
-                                }
-                        });
-
                         
                         
                     })
                     
                 },
             })
-
-            function ajaxBTbl(params,url){
-                $.ajax({
-                url,
-                method:"get",
-                success:function(res, textStatus, XHR){
-                        params.success(res)
-                    }
-                });
-                
-            }
 
             // formatter column action on superhero table
             function supeherotableformatter(value, row, index) {
@@ -513,6 +390,34 @@
                     '</button>  ',
                 ].join('');
             }
+
+            // get others skill that superhero doesn't have
+            function getOtherSkillsDontHave(id){
+                $.ajax({
+                        url: `${url}/show_skills_not/${id}`,
+                        method:"get",
+                        success:function(res){
+                                let data = []
+                                res.map((val) => {
+                                    data.push({id: val.id, text:val.skill_name})
+                                })
+
+                                $("input[name='new_skill']").val(res[0].id);
+                                $("#superhero_skills_select").select2({
+                                    tags: true,
+                                    data
+                                    
+                                }); 
+                                $('#superhero_skills_select').on('select2:select', function(){
+                                    const selected_data = $(this).select2('data')[0]
+                                    $("[name='new_skill']").val(selected_data.id);
+                                });
+                            },
+                        error:function(xhr, status, error){
+                                toastr["error"](xhr.responseJSON.messages.error, `${error} (${xhr.status})`)
+                            }
+                    });
+            }
             
 
             function convertSerializeArray(form){
@@ -530,5 +435,4 @@
             
         })
     </script>
-    </body>
-</html>
+<?php require_once("foot_v.php") ?>

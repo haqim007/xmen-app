@@ -37,6 +37,9 @@ $routes->get('/', 'Home::index');
 $routes->get('xmenapi/show_skills/(:segment)',                'XmenAPI::show_skills/$1');
 $routes->get('xmenapi/delete_superheroskills/(:segment)',    'XmenAPI::delete_superheroskills/$1');
 $routes->get('xmenapi/show_skills_not/(:segment)',    'XmenAPI::show_skills_not/$1');
+$routes->get('xmenapi/get_superhero_groupby_gender',    'XmenAPI::get_superhero_groupby_gender');
+$routes->get('xmenapi/kid_skills_prob/(:segment)/(:segment)',    'XmenAPI::kid_skills_prob/$1/$2');
+
 
 $routes->presenter('xmenapi');
 /*

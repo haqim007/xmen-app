@@ -130,16 +130,18 @@ class XmenAPI extends ResourceController
                     $data = [
                         'skill_name' => $json->new_skill
                     ];
+                    $new_skill = $json->new_skill;
             }else{
                 $input = $this->request->getRawInput();
                 $data = [
                     'skill_name' => $input['new_skill']
                 ];
                 $check_skill = $skills_m->find($input['new_skill']);
+                $new_skill = $input['new_skill'];
             }
             
             if($check_skill){
-                $skill_id = $new_skil;
+                $skill_id = $new_skill;
             }else{
                 
                 $data['created_datetime'] = date("Y-m-d H:i:s");
@@ -173,7 +175,7 @@ class XmenAPI extends ResourceController
                     ]);
             }
         } catch (\Throwable $th) {
-            //throw $th;
+            // throw $th;
             return $this->failServerError('Server error. Please contact the Administrator');
         }
 
@@ -219,10 +221,47 @@ class XmenAPI extends ResourceController
     // get skills that a superhero doesn't have
     public function show_skills_not($id = null)
     {
-        $model = new Skills_m();
-
+        
         try {
+            $model = new Skills_m();
             $data = $model->exceptSuperheroID($id);
+            if($data){
+                return $this->respond($data, 200);
+            }else{
+                return $this->respond([], 200);
+            }
+        } catch (\Throwable $th) {
+            // throw $th;
+            return $this->failServerError('Server error. Please contact the Administrator');
+        }
+    }
+
+    public function get_superhero_groupby_gender(){
+        try {
+            $model = new Superhero_m();
+            $men = $model->where("gender_id", 1)->findAll();
+            $women = $model->where("gender_id", 2)->findAll();
+
+            $data = [$men, $women];
+            if($data){
+                return $this->respond($data, 200);
+            }else{
+                return $this->respond([], 200);
+            }
+        } catch (\Throwable $th) {
+            // throw $th;
+            return $this->failServerError('Server error. Please contact the Administrator');
+        }
+    }
+
+    public function kid_skills_prob($father_id, $mother_id){
+        try {
+            $model = new SuperheroSkills_m();
+            $data = $model
+                ->select("master_skills.id, skill_name")
+                ->join("master_skills", "master_skills.id = skill_id")
+                ->whereIn("superhero_id", [$father_id, $mother_id])->findAll();
+
             if($data){
                 return $this->respond($data, 200);
             }else{
