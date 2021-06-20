@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 20, 2021 at 07:15 AM
+-- Generation Time: Jun 20, 2021 at 05:40 PM
 -- Server version: 10.4.19-MariaDB
 -- PHP Version: 7.4.20
 
@@ -97,7 +97,9 @@ ALTER TABLE `master_superhero`
 -- Indexes for table `superhero_skills`
 --
 ALTER TABLE `superhero_skills`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `fk_master_skills_id` (`skill_id`),
+  ADD KEY `fk_master_superhero_id` (`superhero_id`);
 
 --
 -- AUTO_INCREMENT for dumped tables
@@ -126,6 +128,17 @@ ALTER TABLE `master_superhero`
 --
 ALTER TABLE `superhero_skills`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- Constraints for dumped tables
+--
+
+--
+-- Constraints for table `superhero_skills`
+--
+ALTER TABLE `superhero_skills`
+  ADD CONSTRAINT `fk_master_skills_id` FOREIGN KEY (`skill_id`) REFERENCES `master_skills` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `fk_master_superhero_id` FOREIGN KEY (`superhero_id`) REFERENCES `master_superhero` (`id`) ON DELETE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
