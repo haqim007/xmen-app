@@ -35,6 +35,7 @@ $routes->setAutoRoute(true);
 $routes->get('/', 'Home::index');
 
 $routes->get('xmenapi/show_skills/(:segment)',    'XmenAPI::show_skills/$1');
+$routes->get('xmenapi/delete_superheroskills/(:segment)',    'XmenAPI::delete_superheroskills/$1');
 $routes->presenter('xmenapi');
 /*
  * --------------------------------------------------------------------

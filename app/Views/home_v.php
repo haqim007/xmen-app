@@ -77,6 +77,13 @@
                 <div class="row">
                     <div class="col-md-12">
                         <div class="table-responsive">
+                            <div id="toolbar">
+                                <div class="form-inline" role="form">
+                                    <div class="form-group">
+                                        <button class="btn btn-primary show_superhero_form" data-action-type="create" data-id="0">Tambah Superhero</button>
+                                    </div>
+                                </div>
+                            </div>
                             <table class="table" id="superhero-table"></table>
                         </div>
                     </div>
@@ -89,18 +96,18 @@
 
         
     <!-- Modal Form Edit Superhero -->
-    <div class="modal fade" id="modal_form_superhero" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal fade" id="modal_form_superhero" tabindex="-1" role="dialog" aria-labelledby="title_form_superhero" aria-hidden="true">
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Detail Superhero</h5>
+                <h5 class="modal-title" id="title_form_superhero">Detail Superhero</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
                 <form id="form_superhero">
-                    <div class="row">
+                    <div class="row" style="margin-bottom:10px">
                         <div class="col-md-8">
                             <h3 id="superhero_name_title"></h3>
                         </div>
@@ -242,8 +249,78 @@
 
             // ajax calling data master superhero
             const url = "<?php echo $url_api ?>"
+
+            // load table skills on detail superhero
+            $superheroskills_table.bootstrapTable({
+                ...configTable,
+                ajax: (params) => ajaxBTbl(params, `${url}/show_skills/0`),
+
+                columns: [
+                    {
+                        title: 'ID',
+                        field: 'id'
+                    }, {
+                        title: 'Nama',
+                        field: 'skill_name'
+                    },
+                    {
+                        title: `<span><button class="btn btn-primary btn-small btn_add_skill">Tambah Skill</button></span>`,
+                        field: 'id',
+                        formatter: supeheroSkillstableformatter
+                    }
+                ],
+                onLoadSuccess: function(){
+                    $(".fixed-table-body").css({"height":"fit-content","max-height":"100%"});
+
+                    $(".btn_add_skill").click(function(e){
+                        e.preventDefault()
+                        $(this).hide()
+                        $("#wrapper_form_add_skill").show()
+                    })
+
+                    $("#btn_submit_skill").unbind().click(function(e){
+                        e.preventDefault()
+                        const action_type = $(this).data("action-type")
+                        const data = convertSerializeArray($("#form_add_skill"))
+                        $.ajax({
+                            url: `${url}/create_or_update_superhero_skill/${parseInt(data.superhero_id)}`,
+                            method:"POST",
+                            data,
+                            success:function(res, textStatus, xhr){
+                                toastr["success"](res.messages, "Success!")
+                                $(".btn_add_skill").show()
+                                $("#wrapper_form_add_skill").hide()
+                                $superheroskills_table.bootstrapTable("refresh")
+                            },
+                            error:function(xhr, status, error){
+                                toastr["error"](xhr.responseJSON.messages.error, `${error} (${xhr.status})`)
+                            }
+                        });
+                    })
+
+                    $(".action_superheroskill_delete").click(function(e){
+                        e.preventDefault()
+                        const id = $(this).data("id")
+                        $.ajax({
+                            url: `${url}/delete_superheroskills/${parseInt(id)}`,
+                            method:"DELETE",
+                            success:function(res, textStatus, xhr){
+                                toastr["success"](res.messages, "Success!")
+                                $superheroskills_table.bootstrapTable("refresh")
+                            },
+                            error:function(xhr, status, error){
+                                toastr["error"](xhr.responseJSON.messages.error, `${error} (${xhr.status})`)
+                            }
+                        });
+                    })
+                }
+
+            })
+
+            // load table superhero
             $superhero_table.bootstrapTable({
                 ...configTable,
+                toolbar:"#toolbar",
                 ajax: function(params){
 
                     $.ajax({
@@ -275,9 +352,21 @@
                 onLoadSuccess: function() {
                     $(".fixed-table-body").css({"height":"fit-content","max-height":"100%"})
 
-                    $(".action_superhero_edit").click(function(){
+                    $(".show_superhero_form").click(function(){
+                        const action_type = $(this).data("action-type")
+
+                        if(action_type === "edit"){
+                            $(".submit_form_superhero").text("Edit")
+                            $("#title_form_superhero").text("Detail Superhero")
+                        }else{
+                            $(".submit_form_superhero").text("Create")
+                            $("#title_form_superhero").text("Create Superhero")
+                        }
+                        $(".submit_form_superhero").data("action-type", action_type)
                         const id = parseInt($(this).data("id"))
-                        $.ajax({
+                        
+                        if(id){
+                            $.ajax({
                             url: `${url}/show/${id}`,
                             method:"get",
                             success:function(res){
@@ -292,22 +381,43 @@
                                     $("#form_add_skill [name='superhero_id']").val(res.id)
 
                                     $("#modal_form_superhero").modal("show")
-                                    load_superheroskills(id)
+                                    alert(id)
+                                    $superheroskills_table.bootstrapTable("refreshOptions", {
+                                        ajax: (params) => ajaxBTbl(params, `${url}/show_skills/${id}`),
+                                    })
                                 },
                             error:function(xhr, status, error){
-                                toastr["error"](xhr.responseJSON.messages.error, `${error} (${xhr.status})`)
-                            }
-                        });
+                                    toastr["error"](xhr.responseJSON.messages.error, `${error} (${xhr.status})`)
+                                }
+                            });
+                        }else{
+                            $("#modal_form_superhero").modal("show")
+                            $superheroskills_table.bootstrapTable("refreshOptions", {
+                                        ajax: (params) => ajaxBTbl(params, `${url}/show_skills/${id}`),
+                                    })
+                        }
+                        
                     })
                     
                 },
             })
 
+            function ajaxBTbl(params,url){
+                $.ajax({
+                url,
+                method:"get",
+                success:function(res, textStatus, XHR){
+                        params.success(res)
+                    }
+                });
+                
+            }
+
             // formatter column action on superhero table
             function supeherotableformatter(value, row, index) {
 
                 return [
-                `<button class="btn btn-primary btn action_superhero_edit" data-id="${value}">`,
+                `<button class="btn btn-primary show_superhero_form" data-action-type="edit" data-id="${value}">`,
                     'View Detail',
                 '</button>  ',
                 `<button class="btn btn-danger action_superhero_Delete" onclick="return confirm(\'Anda yakin ingin menghapus data?\')" data-id="${value}">`,
@@ -321,92 +431,63 @@
                 e.preventDefault()
                 const action_type = $(this).data("action-type")
                 const data = convertSerializeArray($("#form_superhero"))
-                $.ajax({
-                    url: `${url}/update/${parseInt(data.superhero_id)}`,
-                    method:"PUT",
-                    data,
-                    success:function(res, textStatus, xhr){
-                        toastr.success(res.messages, "Success!")
-                        $superhero_table.bootstrapTable("refresh")
-                    },
-                    error:function(xhr, status, error){
-                        toastr.error(xhr.responseJSON.messages.error, `${error} (${xhr.status})`)
-                    }
-                });
+                if(action_type === "edit"){
+                    $.ajax({
+                        url: `${url}/update/${parseInt(data.superhero_id)}`,
+                        method:"PUT",
+                        data,
+                        success:function(res, textStatus, xhr){
+                            toastr.success(res.messages, "Success!")
+                            $superhero_table.bootstrapTable("refresh")
+                        },
+                        error:function(xhr, status, error){
+                            toastr.error(xhr.responseJSON.messages.error, `${error} (${xhr.status})`)
+                        }
+                    });
+                }else{
+                    $.ajax({
+                        url: `${url}/create`,
+                        method:"POST",
+                        data,
+                        success:function(res, textStatus, xhr){
+                            toastr.success(res.messages, "Success!")
+                            $superhero_table.bootstrapTable("refresh")
+                            $("#form_add_skill [name='superhero_id']").val(res.data.id)
+                            $superheroskills_table.bootstrapTable("refreshOptions", {
+                                        ajax: (params) => ajaxBTbl(params, `${url}/show_skills/${res.data.id}`),
+                                    })
+                        },
+                        error:function(xhr, status, error){
+                            toastr.error(xhr.responseJSON.messages.error, `${error} (${xhr.status})`)
+                        }
+                    });
+                }
             })
 
-
-            $("#modal_form_superhero").on("hide.bs.modal", function(e){
+            // reset everything inside modal form superhero
+            $("#modal_form_superhero").on("hidden.bs.modal", function(e){
                 $(".btn_add_skill").show()
                 $("#wrapper_form_add_skill").hide()
+
+                $("#superhero_name_title").text("")
+
+                $("#form_superhero #superhero_id_text").text("")
+                $("#form_superhero [name='superhero_id']").val("")
+                $("#form_superhero #superhero_name").val("")
+                $("#form_superhero #superhero_gender").val(1).change()
+
+                $("#form_add_skill [name='superhero_id']").val("")
             })
+         
 
-            function load_superheroskills(id){
-                $superheroskills_table.bootstrapTable({
-                    ...configTable,
-                    ajax: function(params){
-
-                        $.ajax({
-                        url: `${url}/show_skills/${id}`,
-                        method:"get",
-                        success:function(res, textStatus, XHR){
-                                params.success(res)
-                            }
-                        });
-                        
-                    },
-                    columns: [
-                        {
-                            title: 'ID',
-                            field: 'id'
-                        }, {
-                            title: 'Nama',
-                            field: 'skill_name'
-                        },
-                        {
-                            title: `<span><button class="btn btn-primary btn-small btn_add_skill">Tambah Skill</button></span>`,
-                            field: 'id',
-                            formatter: supeheroSkillstableformatter
-                        }
-                    ],
-                    onLoadSuccess: function(){
-                        $(".btn_add_skill").click(function(e){
-                            e.preventDefault()
-                            $(this).hide()
-                            $("#wrapper_form_add_skill").show()
-                        })
-
-                        $("#btn_submit_skill").click(function(e){
-                            e.preventDefault()
-                            const action_type = $(this).data("action-type")
-                            const data = convertSerializeArray($("#form_add_skill"))
-                            $.ajax({
-                                url: `${url}/create_or_update_superhero_skill/${parseInt(data.superhero_id)}`,
-                                method:"POST",
-                                data,
-                                success:function(res, textStatus, xhr){
-                                    toastr["success"](res.messages, "Success!")
-                                    $superhero_table.bootstrapTable("refresh")
-                                    $(".btn_add_skill").show()
-                                    $("#wrapper_form_add_skill").hide()
-                                    $superheroskills_table.bootstrapTable("refresh")
-                                },
-                                error:function(xhr, status, error){
-                                    toastr["error"](xhr.responseJSON.messages.error, `${error} (${xhr.status})`)
-                                }
-                            });
-                        })
-                    }
-                })
-
-                function supeheroSkillstableformatter(value, row, index){
-                    return [
-                        `<button class="btn btn-danger action_superheroskill_delete" onclick="return confirm(\'Anda yakin ingin menghapus data?\')" data-id="${value}">`,
-                            "Hapus",
-                        '</button>  ',
-                    ].join('');
-                }
+            function supeheroSkillstableformatter(value, row, index){
+                return [
+                    `<button class="btn btn-danger action_superheroskill_delete" onclick="return confirm(\'Anda yakin ingin menghapus data?\')" data-id="${value}">`,
+                        "Hapus",
+                    '</button>  ',
+                ].join('');
             }
+            
 
             function convertSerializeArray(form){
                 const data = form.serializeArray()

@@ -35,6 +35,37 @@ class XmenAPI extends ResourceController
             return $this->failServerError('Server error. Please contact the Administrator');
         }
     }
+
+    // create a superhero
+    public function create()
+    {
+        $model = new Superhero_m();
+        $json = $this->request->getJSON();
+        if($json){
+            $data = [
+                'name' => $json->superhero_name,
+                'gender_id' => $json->superhero_gender
+            ];
+        }else{
+            $input = $this->request->getRawInput();
+            $data = [
+                'name' => $input['superhero_name'],
+                'gender_id' => $input['superhero_gender']
+            ];
+        }
+
+        $model->insert($data);
+        $data['id'] = $model->getInsertID();
+        $response = [
+            'status'   => 201,
+            'error'    => null,
+            'messages' => 'Data Saved',
+            'data' => $data
+        ];
+         
+        return $this->respondCreated($response, 201);
+    }
+ 
  
     // update superhero
     public function update($id = null)
@@ -159,11 +190,28 @@ class XmenAPI extends ResourceController
             if($data){
                 return $this->respond($data, 200);
             }else{
-                return $this->failNotFound('No Data Found with id '.$id);
+                return $this->respond([], 200);
             }
         } catch (\Throwable $th) {
             // throw $th;
             return $this->failServerError('Server error. Please contact the Administrator');
+        }
+    }
+
+    public function delete_superheroskills($id){
+        $model = new SuperheroSkills_m();
+        $data = $model->find($id);
+        if($data){
+            $model->delete($id);
+            $response = [
+                'status'   => 200,
+                'error'    => null,
+                'messages' =>'Data Deleted'
+            ];
+             
+            return $this->respondDeleted($response);
+        }else{
+            return $this->failNotFound('No Data Found with id '.$id);
         }
     }
  
